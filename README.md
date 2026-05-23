@@ -14,8 +14,9 @@ Rebuilding the "Everyday Market App" application using React and Vite to show us
 ## Table of Contents
 - [Requirements]
 - [How it Works]
-  - [Parent Product Page - Child Category Menu]
-  - [Parent Category Menu - Child Category Menu Item]
+  - [How The Components Interact]
+    - [Sending Data to Children]
+    - [Sending Events to Parents]
 - [Testing]
 	- [Development Server]
   - [Build]
@@ -37,10 +38,39 @@ The application has a global component `Header` with a background image and a na
 
 On the `Products Page` page, the focus of this assignment, you will see five categories. These are the `Category Menu Items` components which are bound to the overall `Category Menu`, which is bound to the `Products Page`.
 
-The `marketService` service provides the array of categories and a function to load the categories array to the `Products Page`.
+The `marketService` service provides the array of categories and a function to load the categories array to the `Products Page` via a promise with a 2 second delay to simulate asynchronous data loading.
 
-*****ADD STUFF HERE
+### How The Components Interact
+#### Sending Data to Children
+`ProductsPage` creates the constant `categories` and sets it's state to `[]`. useEffect is then used to load the categories array from the `marketService` into the new constant, updating this state at the first rendering. This page then passes this new array down to its child as a prop, data binding ProductsPage's `categories` to Category Menu's `categories`:
+```jsx
+<CategoryMenu categories={categories} onAction={increaseCount} />
+```
 
+`CategoryMenu` imports the `categories` prop as a parameter and maps this array to `CategoryMenuItem`. This iterates through the array and sends each `category` to `CategoryMenuItem` via data binding CategoryMenu's `category` to CategoryMenuItem's `category`:
+```jsx
+{categories.map((category, index) => (
+  <CategoryMenuItem key={index} category={category} onAction={showCategory} />
+))}
+```
+
+`CategoryMenuItem` imports the `category` prop as a parameter and uses `category.name` to print the name field of each category item.
+
+#### Sending Events to Parents
+Along with data binding `categories`, `ProductsPage` also data binds `onAction` to a function within `ProductsPage`. This is sent to the child as a prop. When `onAction` is triggered in `CategoryMenuItem`, it will trigger the intermediary function in `CategoryMenu` which will trigger this function, `increaseCount`, and update the component's state:
+```jsx
+<CategoryMenu categories={categories} onAction={increaseCount} />
+```
+
+Along with importing `categories`, `CategoryMenu` imports the prop `onAction` from `ProductsPage`. This is sent to the child as a prop.`CategoryMenu` then binds `onAction` to a function within `CategoryMenu`. When `onAction` is triggered in `CategoryMenuItem`, it will trigger this function, `showCategory`, and update the component's state:
+```jsx
+<CategoryMenuItem key={index} category={category} onAction={showCategory} />
+```
+
+Along with importing `category`, `CategoryMenuItem` imports the prop `onAction` from `CategoryMenu`. `CategoryMenuItem` uses this function with `category` as a parameter to update the component's state upon a click event:
+```jsx
+<div class="category-menu-item" onClick={() => onAction(category)}>
+```
 
 ## Testing
 ### Development Server
@@ -63,6 +93,14 @@ Serve the production build locally for previewing
 ```bash
 npm run preview
 ```
+
+### Lint
+Use ESLint to lint the code
+```bash
+npm run lint
+```
+
+Lint was run before submission and no lint was found.
 
 ### Home Page
 Once you have navigated to the local server, the application will load the `Home` page:
