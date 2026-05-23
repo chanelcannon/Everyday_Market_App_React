@@ -1,9 +1,9 @@
 import './CategoryMenuItem.css';
 
-function CategoryMenuItem({category}) {
+function CategoryMenuItem({category, onAction}) {
   return(
-    <div class="category-menu-item" onClick={() => onItemClick(category)} onKeyPress={() => onItemClick(category)} tabIndex="0">
-      <h3>{category.name}</h3>
+    <div class="category-menu-item" onClick={() => onAction(category)}>
+      <li><h3>{category.name}</h3></li>
     </div>
   );
 }

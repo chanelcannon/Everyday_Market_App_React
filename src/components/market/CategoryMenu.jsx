@@ -1,23 +1,27 @@
 import './CategoryMenu.css'
-import { useState, useEffect } from 'react';
-import marketService from '../../services/marketService';
+import { useState } from 'react';
 import CategoryMenuItem from './CategoryMenuItem';
 
-function CategoryMenu({ categories }) {
+function CategoryMenu({ categories, onAction }) {
 
-  const [loadCategories, setLoadCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  useEffect(() => {
-    setLoadCategories(categories);
-  }, [categories]);
+  function showCategory(category) {
+     setSelectedCategory(category);
+     onAction(category);
+  }
 
   return(
     <div className="category-menu">
-      <h1>Categories</h1>
-      <div className="categories">
-        {loadCategories.map((category, index) => (
-          <CategoryMenuItem key={index} category={category} />
+       <div class="selected-category" style={{ visibility: selectedCategory ? 'visible' : 'hidden' }}>
+          <p>Category Selected: {selectedCategory?.name}</p>
+      </div>
+      <div className="categories-grid">
+        <ul>
+        {categories.map((category, index) => (
+          <CategoryMenuItem key={index} category={category} onAction={showCategory} />
         ))}
+      </ul>
       </div>
     </div>
   );
